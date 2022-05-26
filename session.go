@@ -20,6 +20,27 @@ func (session *Session) init() {
 	session.activeShell = newShell
 }
 
+func (session *Session) getActiveShell() *Shell {
+	return ms.activeShell
+}
+
+func (session *Session) getLastInactiveShell() (*Shell, error) {
+	if len(session.inactiveShells) != 0 {
+
+		return session.inactiveShells[len(session.inactiveShells)-1], nil
+	}
+	return nil, errors.New("no last active shell")
+}
+
+func (session *Session) getShellByName(name string) (*Shell,error) {
+	for _ , shell := range session.shells {
+		if shell.name == name {
+			return &shell, nil
+		}
+	}
+	return nil, errors.New("shell not found")
+}
+
 func (session *Session) createShell(name string) (*Shell, error) {
 	if session.activeShell != nil {
 		session.inactiveShells = append(session.inactiveShells, session.activeShell)
@@ -59,7 +80,7 @@ func (session *Session) destoryInactiveShell(s *Shell) error {
 	var err error
 	if len(session.inactiveShells) != 0 {
 		for i, inactiveShell := range session.inactiveShells {
-			if inactiveShell == s {
+			if *inactiveShell == *s {
 				session.inactiveShells = append(session.inactiveShells[:i], session.inactiveShells[i+1:]...)
 				err = nil
 				break
@@ -69,6 +90,8 @@ func (session *Session) destoryInactiveShell(s *Shell) error {
 	}
 	return err
 }
+
+
 
 func (session *Session) setActiveShell(s *Shell) error {
 
@@ -81,22 +104,9 @@ func (session *Session) setActiveShell(s *Shell) error {
 	}
 	session.activeShell = s
 	return nil
-
-
-	// if is in inactiveshell, remove!
-
-	// hier wird die nun aktive shell aus inactiveShells gelöscht
-	// und die davor ins Active
-
 }
 
-func (session *Session) getLastInactiveShell() (*Shell, error) {
-	if len(session.inactiveShells) != 0 {
 
-		return session.inactiveShells[len(session.inactiveShells)-1], nil
-	}
-	return nil, errors.New("no last active shell")
-}
 
 func (session *Session) setInactiveShell(s *Shell) error {
 
@@ -105,7 +115,11 @@ func (session *Session) setInactiveShell(s *Shell) error {
 	// else just add it
 	if len(session.inactiveShells) != 0 {
 		for i, inactiveShell := range session.inactiveShells {
-			if inactiveShell == s {
+			fmt.Println("inactiveShell.id")
+			fmt.Println(inactiveShell.id)
+			fmt.Println("s.id")
+			fmt.Println(s.id)
+			if *inactiveShell == *s {
 				// remove shell
 				session.inactiveShells = append(session.inactiveShells[:i], session.inactiveShells[i+1:]...)
 				// add shell to end

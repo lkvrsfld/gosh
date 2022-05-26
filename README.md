@@ -15,5 +15,11 @@ WIP
 - catch:
     - arrows (with history)
     - ctrl + c, etc..
-    
+
+
+
+
+BUG in set etc:
+
+stdout und stderr sind in ms.shells NIL, aber werden vom activeShell ins inactive geschrieben, wo stdout und stderr NICHT NIL SIND lel
 

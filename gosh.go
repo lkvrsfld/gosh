@@ -13,35 +13,31 @@ func (g *gosh) new(args []string) error {
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
-	} 
+	}
 	err = g.set(s.name)
 	if err != nil {
 		return err
-	} 
+	}
 	return nil
 }
 
 func (g *gosh) set(name string) error {
-	var s *Shell
 
-	for _ , shell := range ms.shells {
-		if shell.name == name {
-			s = &shell
-			break
-		}	
-	}
+	s, err := ms.getShellByName(name)
 
-	if s != nil {
-		err := ms.setInactiveShell(ms.activeShell)
-		if err != nil {
-			fmt.Println(err.Error())
-			return err
-		} 
-		err = ms.setActiveShell(s)
-		if err != nil {
-			fmt.Println(err.Error())
-			return err
-		} 
+	if err != nil {
+		return errors.New("no shell with name " + name + ", err: " + err.Error())
 	}
-	return errors.New("no shell with name " + name)
+	
+	err = ms.setInactiveShell(ms.getActiveShell())
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+	err = ms.setActiveShell(s)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+	return nil
 }
