@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -50,9 +51,9 @@ func (s *Shell)run(input string) error {
     // Prepare the command to execute.
     switch args[0] {
         case "exit":
-            ms.destryShell(s)
+            s.exit()
         case "gosh":
-            s.goshHandler(args[1:])
+            if err := s.goshHandler(args[1:]); err != nil {return err}
         default:
             if err := s.shExec(args); err != nil {
                 fmt.Println(err.Error())
@@ -82,7 +83,9 @@ func (s *Shell) goshHandler(args []string) error {
         }
         fmt.Println("created session")
     case "set":
-
+        if err := gosh.set(args[1]); err != nil {
+            return err
+        }
     case "list":
 
     }
@@ -90,7 +93,16 @@ func (s *Shell) goshHandler(args []string) error {
 }
 
 
+func (s *Shell) exit() {
+    lastShell, err := ms.getLastInactiveShell()
+    if err != nil {
+        fmt.Println(err.Error())
+        os.Exit(0)
+    }
+    ms.setActiveShell(lastShell)
 
+    ms.destoryShell(s)
+}
 
 func (s *Shell) ps1() string {
     return s.name + "> "
@@ -102,3 +114,4 @@ func (s *Shell) StdErr() io.Writer {
 func (s *Shell) StdOut() io.Writer {
     return s.Stdout
 }
+
