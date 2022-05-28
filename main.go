@@ -15,9 +15,10 @@ func main() {
 
     
     for {
-        ms.activeShell.Stderr = os.Stderr
-        ms.activeShell.Stdout = os.Stdout
-        ms.activeShell.mainHandler(stdin, ms.activeShell)
+        activeShell := *ms.activeShell
+        activeShell.Stderr = os.Stderr
+        activeShell.Stdout = os.Stdout
+        activeShell.mainHandler(stdin, ms.activeShell)
     }
 }
 

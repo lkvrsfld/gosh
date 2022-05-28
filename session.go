@@ -59,7 +59,7 @@ func (session *Session) destoryShell(s *Shell) error {
 	// iterate though shells and remove
 	if len(session.shells) != 0 {
 		for i, shell := range session.shells {
-			if &shell == s {
+			if shell == *s {
 				session.shells = append(session.shells[:i], session.shells[i+1:]...)
 				err = nil
 				break
